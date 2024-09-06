@@ -20,9 +20,9 @@ NOTE: the fvweno.yaml is confirgured for a linux machine. If you don't have linu
 You might need a few more libraries (don't worry the program will error out and say you don't have a library that you can then promptly download.)
 
 
-Classical runs:
+Two folders: Classical and Quantum. Classical contains files that solves the 1-d Euler gas law in three difference instances (smooth solution, Lax, and Sod) using a RK4 (fourth order) time stepper and fifth order WENO discretization in space. Quantum contains code that uses a fourth order quantum ODE time method and fifth order WENO discretization in space.  
 
-See folder named "Classical"
+In either folder:
 
 A. To use the python code:
 1. Open 'euler_hb.py', the main file.
@@ -52,18 +52,11 @@ C. To perform error measurements
 2. Errors are displayed in the terminal.
 
 
-Quantum runs:
-See folder named "Quantum"
+For quantum algorithm call in euler_hb within the Quantum folder:
 
-Very similar workflow to the "Classical" instructions
-
-1)One can change epsilon (upper bound on numerical error between the numerical and exact solution, delta (1-delta is probability this upper bound is satisfied)  (see quantum algorithm for details))
+1) One can change epsilon (upper bound on numerical error between the numerical and exact solution, delta (1-delta is probability this upper bound is satisfied)  (see quantum algorithm for details))
 2) One can also change n_samples (degree of legendre polynomial used in gauss-quadature) - but we set n_samples=2 to recover a 2*n_samples=4th order time stepping method.
 
-
-Closing thoughts on Classical and Quantum folders:
-
-If running test=1 then a error/convergence study is eventually reported to the terminal and a text file is generated in the directory with the same error/convergence study.
 
 If test=2 you can pick which instance of the Riemann problem is to be solved (Lax or Sod) by commenting/uncommenting the section that specifices the initial conditions associated with each problem in euler_tests.py.
 
