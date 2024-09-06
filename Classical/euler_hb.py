@@ -151,23 +151,140 @@ def run(Nx):
 		# inf_err = np.array([np.linalg.norm(derr[0,:],np.inf), np.linalg.norm(derr[1,:],np.inf), np.linalg.norm(derr[2,:],np.inf)])
 		# print('L1, L2, Linf errors')
 		# print(np.array([one_err, two_err, inf_err]))
-		print("starting to plot...")
-		dx = np.abs( (xlims[1]-xlims[0])/512 )
-		x_fine = np.linspace(xlims[0]-3*dx, xlims[1]+2*dx, 512+6)
-		plt.plot(x_fine,utheo(x_fine)[0],'k',label="Exact")
-		plt.xlabel(r"$x$")
-		plt.ylabel(r"$\rho(x,T)$")
 		
-		plt.plot(x,u_LxF[0,:],'b--',label="LxF")
-		plt.plot(x,u_LxW[0,:],'g--',label="LxW")
-		plt.plot(x,u_WENO[0,:],'r--',label="WENO")
-		plt.legend()
-		# utheo = lambda x: u0(x - (t+dt))
-		print(dt)
-		print(u[0,:][::5])
+	n = 0
+	dx = np.abs( (xlims[1]-xlims[0])/Nx )
+	# x = np.linspace(xlims[0]-3*dx, xlims[1]+2*dx, Nx+6)
+	x = np.linspace(xlims[0]-2.5*dx, xlims[1]+2.5*dx, Nx+6)
+	Nx = Nx+6
+
+	# Initial condition averaging
 	
-		plt.savefig(title+"allononeplot-" + str(Nx_normal) +".pdf")
-		plt.clf()
+	u = BC(cellav(u0, x, dx))
+	# CFL
+	vals, _ = EigA(u)
+	amax = np.max(np.max(np.abs(vals)))
+	dt = Co * dx/amax
+
+	# Evolution right-hand side
+	
+
+	# Graphics initialisation
+	# if plots:
+	# 	figure, ax = plt.subplots(figsize=(10, 8))
+	# 	M = 1.1 * (np.max(np.abs(u[plots-1,:])) + 0.02)
+	# 	plt.axis([x[0], x[Nx-1], -M, M])
+	# 	line1, = ax.plot(x,u[plots-1,:],'b.-')
+	# 	plt.xlabel('x')
+	# 	plt.ylabel('u_'+str(plots))
+	# 	plt.title('t = '+str(t))
+	# 	plt.draw()
+
+	# Main loop
+	print('Entering loop (gamma = '+str(gam)+'). - Nx=' +str(Nx_normal))
+	tStart = time.time()
+	tPlot = time.time()
+	u = BC(cellav(u0, x, dx))
+	t = 0
+	flux = LxF # LxF, LxW
+	inter = DoNone
+	L = RHS(flux, inter, BC, dt, dx)
+	while t<Tf:
+		# Iteration
+		u = integ(L, u, dt)
+		t = t + dt
+		n = n + 1
+
+		# CFL
+		vals, _ = EigA(u)
+		amax = np.max(np.max(np.abs(vals)))
+		dt = Co * dx/amax
+
+		# Evolution right-hand side
+		if flux == LxW:
+			L = RHS(flux, inter, BC, dt, dx)
+
+		# Graphics update
+		if (plots > 0) and (time.time() - tPlot > 1.5):
+			# intermediate solution
+			line1.set_ydata(u[plots-1,:])
+			figure.canvas.draw()
+			figure.canvas.flush_events()
+			plt.title('t = '+str(t))
+			plt.pause(0.05)
+			tPlot = time.time()
+	tEnd = time.time()
+	u_LxF = u
+	u = BC(cellav(u0, x, dx))
+	t = 0
+	flux = LxW # LxF, LxW
+	inter = DoNone
+	L = RHS(flux, inter, BC, dt, dx)
+	while t<Tf:
+		# Iteration
+		u = integ(L, u, dt)
+		t = t + dt
+		n = n + 1
+
+		# CFL
+		vals, _ = EigA(u)
+		amax = np.max(np.max(np.abs(vals)))
+		dt = Co * dx/amax
+
+		# Evolution right-hand side
+		if flux == LxW:
+			L = RHS(flux, inter, BC, dt, dx)
+
+		# Graphics update
+		if (plots > 0) and (time.time() - tPlot > 1.5):
+			# intermediate solution
+			line1.set_ydata(u[plots-1,:])
+			figure.canvas.draw()
+			figure.canvas.flush_events()
+			plt.title('t = '+str(t))
+			plt.pause(0.05)
+			tPlot = time.time()
+	tEnd = time.time()
+	u_LxW = u
+
+	u = BC(cellav(u0, x, dx))
+	t = 0
+	flux = LxF # LxF, LxW
+	inter = WENO_Roe
+	L = RHS(flux, inter, BC, dt, dx)
+	while t<Tf:
+		# print("time =: " + str(t), end="\r", flush=True)
+		# Iteration
+		u = integ(L, u, dt)
+		t = t + dt
+		n = n + 1
+
+		# CFL
+		vals, _ = EigA(u)
+		amax = np.max(np.max(np.abs(vals)))
+		dt = Co * dx/amax
+
+		# Evolution right-hand side
+		if flux == LxW:
+			L = RHS(flux, inter, BC, dt, dx)
+	u_WENO=u
+	print("starting to plot...")
+	dx = np.abs( (xlims[1]-xlims[0])/512 )
+	x_fine = np.linspace(xlims[0]-3*dx, xlims[1]+2*dx, 512+6)
+	plt.plot(x_fine,utheo(x_fine)[0],'k',label="Exact")
+	plt.xlabel(r"$x$")
+	plt.ylabel(r"$\rho(x,T)$")
+	
+	plt.plot(x,u_LxF[0,:],'b--',label="LxF")
+	plt.plot(x,u_LxW[0,:],'g--',label="LxW")
+	plt.plot(x,u_WENO[0,:],'r--',label="WENO")
+	plt.legend()
+		# utheo = lambda x: u0(x - (t+dt))
+		# print(dt)
+		# print(u[0,:][::5])
+	
+	plt.savefig(title+"allononeplot-" + str(Nx_normal) +".pdf")
+	plt.clf()
 		#utheo = lambda x: u0(x - (t+dt))
 
 
@@ -205,7 +322,7 @@ def gen_error(n_vals,error_vals,time_list,second_list,file_name="errorout.txt"):
 	f.write(str(second_list)+ str("\n"))
 	f.close()
 
-nx_list_main=[16,32,64,128,256,512,1024]
+nx_list_main=[16,32,64]
 
 rho_err_l1=[]
 rho_err_l2 = []
@@ -227,30 +344,34 @@ file_name="classicalweno_nature_run_smooth_updated"
 for nx in nx_list_main:
 	
 	out = run(nx)
-	print(out)
-	(one_err,two_err,inf_err,nx) = out
-	full_error.append(np.array([one_err, two_err, inf_err]))
-	
-	nx_list.append(nx)
+	if(test==1):
+		(one_err,two_err,inf_err,nx) = out
+		full_error.append(np.array([one_err, two_err, inf_err]))
+		
+		nx_list.append(nx)
 
-	rho_err_l1.append(one_err[0])
-	u_err_l1.append(one_err[1])
-	p_err_l1.append(one_err[2])
+		rho_err_l1.append(one_err[0])
+		u_err_l1.append(one_err[1])
+		p_err_l1.append(one_err[2])
 
-	rho_err_l2.append(two_err[0])
-	u_err_l2.append(two_err[1])
-	p_err_l2.append(two_err[2])
-	
-	rho_err_linf.append(inf_err[0])
-	u_err_linf.append(inf_err[1])
-	p_err_linf.append(inf_err[2])  
-generate_convergence_history(rho_err_l1, nx_list, file_name, " rho L1")
-generate_convergence_history(u_err_l1, nx_list, file_name, " u L1")
-generate_convergence_history(p_err_l1, nx_list, file_name, " p L1")
-generate_convergence_history(rho_err_l2, nx_list, file_name, " rho L2")
-generate_convergence_history(u_err_l2, nx_list, file_name, " u L2")
-generate_convergence_history(p_err_l2, nx_list, file_name, " p L2")
-generate_convergence_history(rho_err_linf, nx_list, file_name, " rho Linf")
-generate_convergence_history(u_err_linf, nx_list, file_name, " u Linf")
-generate_convergence_history(p_err_linf, nx_list, file_name, " p Linf")
-gen_error(nx_list,full_error,time_list,secondary_list,"classicalwenosmoothnature.txt")
+		rho_err_l2.append(two_err[0])
+		u_err_l2.append(two_err[1])
+		p_err_l2.append(two_err[2])
+		
+		rho_err_linf.append(inf_err[0])
+		u_err_linf.append(inf_err[1])
+		p_err_linf.append(inf_err[2])  
+
+
+
+if(test==1):
+	generate_convergence_history(rho_err_l1, nx_list, file_name, " rho L1")
+	generate_convergence_history(u_err_l1, nx_list, file_name, " rho u L1")
+	generate_convergence_history(p_err_l1, nx_list, file_name, " E L1")
+	generate_convergence_history(rho_err_l2, nx_list, file_name, " rho L2")
+	generate_convergence_history(u_err_l2, nx_list, file_name, " rho u L2")
+	generate_convergence_history(p_err_l2, nx_list, file_name, " E L2")
+	generate_convergence_history(rho_err_linf, nx_list, file_name, " rho Linf")
+	generate_convergence_history(u_err_linf, nx_list, file_name, " rho u Linf")
+	generate_convergence_history(p_err_linf, nx_list, file_name, " E Linf")
+	gen_error(nx_list,full_error,time_list,secondary_list,"classicalwenosmoothnature.txt")
