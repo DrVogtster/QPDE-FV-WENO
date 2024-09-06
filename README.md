@@ -1,6 +1,6 @@
 Getting an environment to run the codes:
 
-If you are running on a linux machine, for  simplicity, we have added a file 'fvweno.yml' that can be imported via condo:
+If you are running on a linux machine, for  simplicity, we have added a file 'fvweno.yml' that can be imported via conda:
 
 	conda env create -f fvweno.yaml
 	conda activate fvweno
