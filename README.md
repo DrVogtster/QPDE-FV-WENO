@@ -37,8 +37,8 @@ Figures/tables in paper and what code generated them:
 - Fig 1 -  output from running euler.hb in Classical folder with test=2
 - Table 2, 4 - output from running euler.hb in Classical folder with test=1
 - Fig 2,3 / Table 1,3 - output from running euler.hb in Quantum folder with test = 1
-- Fig 4, 5, 6 - output from running euler.hb in Quantum folder with test = 2 (and editing euler_test.py to set Sod initial conditions - see below)
-- Fig 7, 8, 9 - output from running euler.hb in Quantum folder with test = 2 (and editing euler_test.py to set Lax initial conditions - see below)
+- Fig 4, 5, 6 - output from running euler.hb in Quantum folder with test = 2 (and editing euler_tests.py to set Sod initial conditions - see below)
+- Fig 7, 8, 9 - output from running euler.hb in Quantum folder with test = 2 (and editing euler_tests.py to set Lax initial conditions - see below)
 
 
 For example to run Lax modify euler_tests.py,:
