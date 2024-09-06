@@ -2,8 +2,8 @@ Getting an environment to run the codes:
 
 If you are running on a linux machine, for  simplicity, we have added a file 'fvweno.yml' that can be imported via condo:
 
-conda env create -f fvweno.yaml
-conda activate fvweno
+	conda env create -f fvweno.yaml
+	conda activate fvweno
 
 In this conda environment you can then run the codes
 
@@ -21,7 +21,7 @@ You might need a few more libraries (don't worry the program will error out and 
 
 Classical runs:
 
-See folder named "classical"
+See folder named "Classical"
 
 A. To use the python code:
 1. Open 'euler_hb.py', the main file.
@@ -52,18 +52,16 @@ C. To perform error measurements
 
 
 Quantum runs:
-
-
 See folder named "Quantum"
 
 Very similar workflow to the "Classical" instructions
 
 1)One can change epsilon (upper bound on numerical error between the numerical and exact solution, delta (1-delta is probability this upper bound is satisfied)  (see quantum algorithm for details))
-2) One can also change n_samples (degree of legendre polynomial used in gauss-quadature) - but we set n_samples=2 to recover a 2*n_samples=4 order method.
+2) One can also change n_samples (degree of legendre polynomial used in gauss-quadature) - but we set n_samples=2 to recover a 2*n_samples=4th order time stepping method.
 
 If running test=1 then a error/convergence study is eventually reported to the terminal and a text file is generated in the directory with the same error/convergence study.
 
-If test=2 you can pick which instance of the riemann problem to be solved (Lax or Sod) by commenting/uncommenting the section that specifices the initial conditions associated with each problem in euler_tests.py.
+If test=2 you can pick which instance of the Riemann problem is to be solved (Lax or Sod) by commenting/uncommenting the section that specifices the initial conditions associated with each problem in euler_tests.py.
 
 For example:
 
