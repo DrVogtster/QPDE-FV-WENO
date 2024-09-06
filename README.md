@@ -8,6 +8,7 @@ If you are running on a linux machine, for  simplicity, we have added a file 'fv
 In this conda environment you can then run the codes
 
 NOTE: the fvweno.yaml is confirgured for a linux machine. If you don't have linux or you don't use conda one just needs to download:
+
 -jax
 -scipy
 -numpy
