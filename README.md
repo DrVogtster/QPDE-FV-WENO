@@ -53,7 +53,7 @@ For example to run Lax modify euler_tests.py,:
 	# pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
 
 To run Sod, instead comment the Lax initial conditions and uncomment Sod initial conditions. 
- # Cite out work
+ # Cite our work
  If you found these codes to useful in academic research, please cite:
 - include Bibtex + google scholar reference later (after publication).
  
