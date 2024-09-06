@@ -23,7 +23,7 @@ A. How to use the Python scripts:
 -   Keep the shared parameters as default unless necessary. 3. Choose the appropriate 'test' configuration from the provided list (parameters should remain unchanged unless required).
 -   For test 2, configure the Riemann data according to the examples for Lax & Sod (parameters should remain unchanged unless required).
 -  Conducting error measurements: 1. Run the first test in 'euler_tests.py'.
--   Errors will be shown in the terminal.,
+-   Errors will be shown in the terminal (and text files will be generated containing the same information)
 -   For invoking the quantum algorithm in euler_hb within the Quantum directory: 1) Adjust epsilon (the upper limit on numerical error between the numerical and exact solution), and delta (the probability that this upper limit is met) (refer to quantum algorithm details for more information). 2) Modify n_samples (the degree of the Legendre polynomial used in Gauss quadrature) - we use n_samples=2 for a 4th-order time-stepping method (2*n_samples).,
 If using test=2, choose which instance of the Riemann problem to solve (Lax or Sod) by commenting/uncommenting the relevant initial condition sections in euler_tests.py.
 
@@ -39,6 +39,5 @@ For example:
 	# uJ = np.array([0, 0])       # uJ = np.array([0, 0])
 	# pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
 
-
-Plots will always be generated for the problem you try to solve.
+For every problem you attempt to solve, plots will be automatically generated. Currently, the program is set to tackle a series of problems with finite volume cells Nx=16,32,64,...,1024. The plot names will specify the corresponding solution and Nx value they pertain to.
 
