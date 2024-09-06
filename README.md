@@ -31,7 +31,17 @@ A. How to use the Python scripts:
 If using test=2, choose which instance of the Riemann problem to solve (Lax or Sod) by commenting/uncommenting the relevant initial condition sections in euler_tests.py.
 
 
-For example:
+For every problem you attempt to solve, plots will be automatically generated. Currently, the program is set to tackle a series of problems with finite volume cells Nx=16,32,64,...,1024. The plot names will specify the corresponding solution and Nx value they pertain to.
+
+Figures/tables in paper and what code generated them:
+Fig 1 -  output from running euler.hb in Classical folder with test=2
+Table 2, 4 - output from running euler.hb in Classical folder with test=1
+Fig 2,3 / Table 1,3 - output from running euler.hb in Quantum folder with test = 1
+Fig 4, 5, 6 - output from running euler.hb in Quantum folder with test = 2 (and editing euler_test.py to set Sod initial conditions - see below)
+Fig 7, 8, 9 - output from running euler.hb in Quantum folder with test = 2 (and editing euler_test.py to set Lax initial conditions - see below)
+
+
+For example to run Lax modify euler_tests.py,:
 
 	# Lax
 	rhoJ = np.array([0.445, 0.5]) # rhoJ = np.array([0.445, 0.5])
@@ -41,10 +51,12 @@ For example:
 	# rhoJ = np.array([1, 0.125]) # rhoJ = np.array([1, 0.125])
 	# uJ = np.array([0, 0])       # uJ = np.array([0, 0])
 	# pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
+
+and comment Lax portion and uncomment Sod portion to run Sod.
  # Cite out work
  If you found these codes to useful in academic research, please cite:
-- include Bibtex + google scholar reference later.
+- include Bibtex + google scholar reference later (after publication).
  
 
-For every problem you attempt to solve, plots will be automatically generated. Currently, the program is set to tackle a series of problems with finite volume cells Nx=16,32,64,...,1024. The plot names will specify the corresponding solution and Nx value they pertain to.
+
 
