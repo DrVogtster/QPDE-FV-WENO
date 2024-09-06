@@ -17,10 +17,11 @@ In either folder:
 
 A. How to use the Python scripts: 
 - Open 'euler_hb.py', the primary file.
-- In the Configuration section, you have the option to load a pre-defined test (refer to Section B for details). Alternatively, you can configure custom parameters by uncommenting the specified blocks.
+- In the Configuration section, you have the option to load a pre-defined test. Alternatively, you can configure custom parameters by uncommenting the specified blocks.
 - Change the mesh size 'Nx' and Courant number 'Co' as needed.
--  Executing a pre-defined test: 1. Open 'euler_tests.py', the configuration file.
--   Keep the shared parameters as default unless necessary. 3. Choose the appropriate 'test' configuration from the provided list (parameters should remain unchanged unless required).
+-  Executing a pre-defined test: Open 'euler_tests.py', the configuration file.
+-   Keep the shared parameters as default unless necessary.
+-   Choose the appropriate 'test' configuration from the provided list (parameters should remain unchanged unless required).
 -   For test 2, configure the Riemann data according to the examples for Lax & Sod (parameters should remain unchanged unless required).
 -  Conducting error measurements: 1. Run the first test in 'euler_tests.py'.
 -   Errors will be shown in the terminal (and text files will be generated containing the same information)
