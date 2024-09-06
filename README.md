@@ -1,73 +1,33 @@
-Getting an environment to run the codes:
+Setting up an environment for running the codes: If you're on a Linux machine, to keep things straightforward, we have added a 'fvweno.yml' file that can be imported via conda: 
+	conda env create -f fvweno.yaml 
+	conda activate fvweno In this conda environment
+ you can then execute the codes. 
+ 
+ NOTE: The 'fvweno.yaml' is configured specifically for Linux operating system. If you don't use Linux or conda, you need to manually download the following: 
+ - jax
+ - scipy
+ - numpy
+ - dill
+ - prettytable
+ - psutil
+ - wcwidth 
+ 
+ You might need a few additional libraries (don't worry, the program will alert you about any missing libraries so you can download them promptly). There are two folders: Classical and Quantum. The Classical folder contains files that solve the 1-D Euler gas law in three different scenarios (problem resulting in smooth solution, Lax problem (Riemann problem), and Sod problem (Riemann problem) using an RK4 (fourth order) time integration method and a fifth-order WENO spatial discretization. The Quantum folder houses code that employs a fourth-order quantum ODE time integration method and a fifth-order WENO spatial discretization.
+In either folder:
 
-If you are running on a linux machine, for  simplicity, we have added a file 'fvweno.yml' that can be imported via condo:
+A. How to use the Python scripts: 
+- Open 'euler_hb.py', the primary file.
+- In the Configuration section, you have the option to load a pre-defined test. Alternatively, you can configure custom parameters by uncommenting the specified blocks.
+- Change the mesh size 'Nx' and Courant number 'Co' as needed.
+-  Executing a pre-defined test: Open 'euler_tests.py', the configuration file.
+-   Keep the shared parameters as default unless necessary.
+-   Choose the appropriate 'test' configuration from the provided list (parameters should remain unchanged unless required).
+-   For test 2, configure the Riemann data according to the examples for Lax & Sod (parameters should remain unchanged unless required).
+-  Conducting error measurements: 1. Run the first test in 'euler_tests.py'.
+-   Errors will be shown in the terminal (and text files will be generated containing the same information)
+-   For invoking the quantum algorithm in euler_hb within the Quantum directory: 1) Adjust epsilon (the upper limit on numerical error between the numerical and exact solution), and delta (the probability that this upper limit is met) (refer to quantum algorithm details for more information). 2) Modify n_samples (the degree of the Legendre polynomial used in Gauss quadrature) - we use n_samples=2 for a 4th-order time-stepping method (2*n_samples).,
+If using test=2, choose which instance of the Riemann problem to solve (Lax or Sod) by commenting/uncommenting the relevant initial condition sections in euler_tests.py.
 
-	conda env create -f fvweno.yaml
-	conda activate fvweno
-
-In this conda environment you can then run the codes
-
-NOTE: the fvweno.yaml is confirgured for a linux machine. If you don't have linux or you don't use conda one just needs to download:
-
--jax
--scipy
--numpy
--dill
--prettytable
--psutil
--wcwidth
-
-You might need a few more libraries (don't worry the program will error out and say you don't have a library that you can then promptly download.)
-
-
-Classical runs:
-
-See folder named "Classical"
-
-A. To use the python code:
-1. Open 'euler_hb.py', the main file.
-2. In the Configuration section, you can import a pre-defined test
-   (see section B. below). Otherwise, you can set custom parameters
-   in the dedicated section (to uncomment blockwise).
-3. You can set the graphics output 'plots', where
-	0 does not produce graphics
-	1 displays density
-	2 displays momentum
-	3 displays energy
-4. You can set the mesh size 'Nx' and Courant number 'Co' below.
-
-
-B. To run a pre-defined test
-1. Open 'euler_tests.py', which is a configuration file.
-2. Unless needed, leave the common parameters unchanged.
-3. Select the desired configuration 'test' whose parameters are shown below
-   (to be left unchanged unless needed).
-4. For the selection of the Riemann data (test 2),
-   set the custom Riemann data similarly to the Lax & Sod examples above
-   (to be left unchanged unless needed).
-
-
-C. To perform error measurements
-1. Select first test in 'euler_tests.py' and run the simulation.
-2. Errors are displayed in the terminal.
-
-
-Quantum runs:
-See folder named "Quantum"
-
-Very similar workflow to the "Classical" instructions
-
-1)One can change epsilon (upper bound on numerical error between the numerical and exact solution, delta (1-delta is probability this upper bound is satisfied)  (see quantum algorithm for details))
-2) One can also change n_samples (degree of legendre polynomial used in gauss-quadature) - but we set n_samples=2 to recover a 2*n_samples=4th order time stepping method.
-
-
-Closing thoughts on Classical and Quantum folders:
-
-If running test=1 then a error/convergence study is eventually reported to the terminal and a text file is generated in the directory with the same error/convergence study.
-
-If test=2 you can pick which instance of the Riemann problem is to be solved (Lax or Sod) by commenting/uncommenting the section that specifices the initial conditions associated with each problem in euler_tests.py.
-
-Plots will always be generated for the problem you try to solve.
 
 For example:
 
@@ -79,4 +39,6 @@ For example:
 	# rhoJ = np.array([1, 0.125]) # rhoJ = np.array([1, 0.125])
 	# uJ = np.array([0, 0])       # uJ = np.array([0, 0])
 	# pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
+
+For every problem you attempt to solve, plots will be automatically generated. Currently, the program is set to tackle a series of problems with finite volume cells Nx=16,32,64,...,1024. The plot names will specify the corresponding solution and Nx value they pertain to.
 
