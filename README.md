@@ -60,9 +60,14 @@ Very similar workflow to the "Classical" instructions
 1)One can change epsilon (upper bound on numerical error between the numerical and exact solution, delta (1-delta is probability this upper bound is satisfied)  (see quantum algorithm for details))
 2) One can also change n_samples (degree of legendre polynomial used in gauss-quadature) - but we set n_samples=2 to recover a 2*n_samples=4th order time stepping method.
 
+
+Closing thoughts on Classical and Quantum folders:
+
 If running test=1 then a error/convergence study is eventually reported to the terminal and a text file is generated in the directory with the same error/convergence study.
 
 If test=2 you can pick which instance of the Riemann problem is to be solved (Lax or Sod) by commenting/uncommenting the section that specifices the initial conditions associated with each problem in euler_tests.py.
+
+Plots will always be generated for the problem you try to solve.
 
 For example:
 
