@@ -60,7 +60,7 @@ For quantum algorithm call in euler_hb within the Quantum folder:
 
 If test=2 you can pick which instance of the Riemann problem is to be solved (Lax or Sod) by commenting/uncommenting the section that specifices the initial conditions associated with each problem in euler_tests.py.
 
-Plots will always be generated for the problem you try to solve.
+
 
 For example:
 
@@ -72,4 +72,6 @@ For example:
 	# rhoJ = np.array([1, 0.125]) # rhoJ = np.array([1, 0.125])
 	# uJ = np.array([0, 0])       # uJ = np.array([0, 0])
 	# pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
+
+Plots will always be generated for the problem you try to solve.
 
