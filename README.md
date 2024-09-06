@@ -1,4 +1,6 @@
-Setting up an environment for running the codes: If you're on a Linux machine, to keep things straightforward, we have added a 'fvweno.yml' file that can be imported via conda: 
+# Setting up an environment for running the codes & running the codes: 
+
+If you're on a Linux machine, to keep things straightforward, we have added a 'fvweno.yml' file that can be imported via conda: 
 	conda env create -f fvweno.yaml 
 	conda activate fvweno In this conda environment
  you can then execute the codes. 
@@ -39,6 +41,10 @@ For example:
 	# rhoJ = np.array([1, 0.125]) # rhoJ = np.array([1, 0.125])
 	# uJ = np.array([0, 0])       # uJ = np.array([0, 0])
 	# pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
+ # Cite out work
+ If you found these codes to useful in academic research, please cite:
+- include Bibtex + google scholar reference later.
+ 
 
 For every problem you attempt to solve, plots will be automatically generated. Currently, the program is set to tackle a series of problems with finite volume cells Nx=16,32,64,...,1024. The plot names will specify the corresponding solution and Nx value they pertain to.
 
