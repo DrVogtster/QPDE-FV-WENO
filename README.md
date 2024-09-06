@@ -75,5 +75,3 @@ For example:
 	# uJ = np.array([0, 0])       # uJ = np.array([0, 0])
 	# pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
 
-
- Here the Lax problem will run when test=2
