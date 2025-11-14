@@ -16,7 +16,7 @@ If you're on a Linux machine, to keep things straightforward, we have added a 'f
  
  You might need a few additional libraries (don't worry, the program will alert you about any missing libraries so you can download them promptly). There are two folders: Classical and Quantum. The Classical folder contains files that solve the 1-D Euler gas law in three different scenarios (problem resulting in smooth solution, Lax problem (Riemann problem), and Sod problem (Riemann problem) using an RK4 (fourth order) time integration method and a fifth-order WENO spatial discretization. The Quantum folder houses code that employs a fourth-order quantum ODE time integration method and a fifth-order WENO spatial discretization.
 
-- run_tests.py - run this first - it will run all the tests both classical and quantum. This will generate text files that produce the convergence tables for the smooth example (both using the quantum and classical solver) that appear in the paper, as well as data files that can be used for plotting.
+- run_tests.py - run this first - it will run all classical and quantum tests. This will generate text files that hold  the convergence tables for the smooth example (both using the quantum and classical solver) that appear in the paper, as well as data files that can be used for plotting.
 - plot_data.py - after generating the data, running plot_data.py will make all the figures which appear in the paper.
 
 
