@@ -10,7 +10,7 @@ import dill as pickle
 from matplotlib import pyplot as plt # Graph plotting module for debugging and visualization
 from matplotlib.widgets import Button
 
-from kacewicz_util_core import *
+from .kacewicz_util_core import *
 
 ####################################################################################################
 
@@ -34,7 +34,12 @@ def use_JAX_util():
 	if (JAX_FLAG == True): return
 
 	print("Kacewicz module switching to JAX Autodifferentiation mode...")
-	import kacewicz_util_JAX as util
+	try:
+	# works when imported as a package
+		from . import kacewicz_util_JAX as util
+	except ImportError:
+	# works when run as a standalone script
+		import kacewicz_util_JAX as util
 	JAX_FLAG = True
 
 def use_FD_util():
@@ -48,7 +53,7 @@ def use_FD_util():
 	if (JAX_FLAG == False): return
 	
 	print("Kacewicz module switching to Finite Difference differentiation mode...")
-	import kacewicz_util_FD as util
+	from . import kacewicz_util_FD as util
 	JAX_FLAG = False
 
 # When module is being loaded, attempt to initialize using JAX Autodifferentiation

@@ -4,7 +4,7 @@ jax.config.update("jax_enable_x64", True)
 
 from functools import partial
 
-from kacewicz_util_core import FORMAT
+from .kacewicz_util_core import FORMAT
 
 ####################################################################################################
 

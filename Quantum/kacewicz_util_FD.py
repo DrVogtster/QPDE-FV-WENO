@@ -12,7 +12,7 @@ import os
 
 import dill as pickle
 
-from kacewicz_util_core import FORMAT
+from .kacewicz_util_core import FORMAT
 
 ####################################################################################################
 

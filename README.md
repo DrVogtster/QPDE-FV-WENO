@@ -59,4 +59,3 @@ To run Sod, instead comment the Lax initial conditions and uncomment Sod initial
  
 
 
-

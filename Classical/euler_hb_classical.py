@@ -2,8 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import time
 import math
-from .eeuler_utils import *
+from .euler_utils import *
 from prettytable import PrettyTable
+import pickle
+import os
 # ----------------------------------------------------------------
 # Configuration
 # ----------------------------------------------------------------
@@ -24,7 +26,7 @@ integ = RK1 # RK1, RK3, RK4 <!> RK4 requires smaller time-steps by a factor 2/3 
 # Graphics
 plots = 0 # 0, 1, 2, 3
 
-def run_classical(Nx):
+def run_classical(Nx,test):
 	# Mesh size
 	Nx_normal=Nx
 	Co = 0.6 # CFL
@@ -131,6 +133,7 @@ def run_classical(Nx):
 
 	# Error wrt. exact solution
 	if test==1:
+		print("test data being saved for test=1")
 		uth = cellav(utheo, x, dx)
 		ierr = (x>xlims[0])*(x<xlims[1])
 		derr = u[:,ierr] - uth[:,ierr]
@@ -138,10 +141,15 @@ def run_classical(Nx):
 		#two_err = np.array([np.linalg.norm(derr[0,:]*dx,2), np.linalg.norm(derr[1,:]*dx,2), np.linalg.norm(derr[2,:]*dx,2)])
 		two_err = np.array([np.linalg.norm(derr[0,:]*math.sqrt(dx),2), np.linalg.norm(derr[1,:]*math.sqrt(dx),2), np.linalg.norm(derr[2,:]*math.sqrt(dx),2)])
 		inf_err = np.array([np.linalg.norm(derr[0,:],np.inf), np.linalg.norm(derr[1,:],np.inf), np.linalg.norm(derr[2,:],np.inf)])
+		x_fine = np.linspace(xlims[0]-3*dx, xlims[1]+2*dx, 2048+6)
+		with open("classical" +str(  Nx_normal) +"test="+ str(test)+".pkl", "wb") as f:
+			pickle.dump((x_fine, utheo(x_fine)[0],utheo(x_fine)[1],utheo(x_fine)[2],x,utheo(x)[0],utheo(x)[1],utheo(x)[2], u_WENO[0,:],u_WENO[1,:],u_WENO[2,:]), f) 
+			#utheo = lambda x: u0(x - (t+dt))
+		print("done writting data for (nx,test)=" + str((Nx_normal,test)))
 		return (one_err, two_err,inf_err,n_x_normal)
 		print('L1, L2, Linf errors')
 		print(np.array([one_err, two_err, inf_err]))
-	if test==2:
+	if test==2 or test==3:
 		uth = cellav(utheo, x, dx)
 		# ierr = (x>xlims[0])*(x<xlims[1])
 		# derr = u[:,ierr] - uth[:,ierr]
@@ -214,6 +222,7 @@ def run_classical(Nx):
 			tPlot = time.time()
 	tEnd = time.time()
 	u_LxF = u
+	print("done LxF run")
 	u = BC(cellav(u0, x, dx))
 	t = 0
 	flux = LxW # LxF, LxW
@@ -245,8 +254,16 @@ def run_classical(Nx):
 			tPlot = time.time()
 	tEnd = time.time()
 	u_LxW = u
+	print("done LxW run")
 
 	u = BC(cellav(u0, x, dx))
+	vals, _ = EigA(u)
+	amax = np.max(np.max(np.abs(vals)))
+	dt=None
+	if(test==1):
+		dt = (1.0/8.0)*Co * dx/amax
+	else: 
+		dt = (1.0/16.0)*Co * dx/amax
 	t = 0
 	flux = LxF # LxF, LxW
 	inter = WENO_Roe
@@ -267,28 +284,35 @@ def run_classical(Nx):
 		if flux == LxW:
 			L = RHS(flux, inter, BC, dt, dx)
 	u_WENO=u
-	print("starting to plot...")
-	dx = np.abs( (xlims[1]-xlims[0])/2048 )
+	print("done WENO run")
+	print(u_WENO[0,:])
+	print("writting data from run (nx,test)=" + str((Nx_normal,test)))
 	x_fine = np.linspace(xlims[0]-3*dx, xlims[1]+2*dx, 2048+6)
-	plt.plot(x_fine,utheo(x_fine)[0],'k',label="Exact")
-	plt.xlabel(r"$x$")
-	plt.ylabel(r"$\rho(x,T)$")
+	with open("classical" +str(  Nx_normal) +"test="+ str(test)+".pkl", "wb") as f:
+		pickle.dump((x_fine, utheo(x_fine)[0],utheo(x_fine)[1],utheo(x_fine)[2],x,utheo(x)[0],utheo(x)[1],utheo(x)[2], u_WENO[0,:],u_WENO[1,:],u_WENO[2,:]), f) 
+		#utheo = lambda x: u0(x - (t+dt))
+	print("done writting data for (nx,test)=" + str((Nx_normal,test)))
+	dx = np.abs( (xlims[1]-xlims[0])/2048 )
 	
-	plt.plot(x,u_LxF[0,:],'b--',label="LxF")
-	plt.plot(x,u_LxW[0,:],'g--',label="LxW")
-	plt.plot(x,u_WENO[0,:],'r--',label="WENO")
-	plt.legend()
 		# utheo = lambda x: u0(x - (t+dt))
 		# print(dt)
 		# print(u[0,:][::5])
-	if(Nx_normal==256 or Nx_normal==512 or Nx_normal==1024):
+	
+	if(Nx_normal==256 or Nx_normal==512 or Nx_normal==1024 and test==3):
+		
+		plt.plot(x_fine,utheo(x_fine)[0],'k',label="Exact")
+		plt.xlabel(r"$x$")
+		plt.ylabel(r"$\rho(x,T)$")
+
+		plt.plot(x,u_LxF[0,:],'b--',label="LxF")
+		plt.plot(x,u_LxW[0,:],'g--',label="LxW")
+		plt.plot(x,u_WENO[0,:],'r--',label="WENO")
+		plt.legend()
 		cwd = os.getcwd()  # directory where you ran the script
 		outfile = os.path.join(cwd, title+"allononeplot-" + str(Nx_normal) +".pdf")
-	plt.savefig(outfile)
-	plt.clf()
-	with open("classical" +str(  Nx_normal) +"instance"+ str(test)+".pkl", "wb") as f:
-		pickle.dump((x,utheo(x)[0],utheo(x)[1],utheo(x)[2], u_WENO[0,:],u_WENO[1,:],u_WENO[2,:]), f) 
-		#utheo = lambda x: u0(x - (t+dt))
+		plt.savefig(outfile)
+		plt.clf()
+	
 
 
 
@@ -324,50 +348,8 @@ def gen_error(n_vals,error_vals,time_list,second_list,file_name="errorout.txt"):
 	f.write(str(time_list)+ str("\n"))
 	f.write(str(second_list)+ str("\n"))
 	f.close()
-def set_test(test):
-	# Common parameters
-	flux = LxF # LxF, LxW
-	inter = WENO_Roe # DoNone, WENO, WENO_Roe
-	integ = RK4 # RK1, RK3, RK4 <!> RK4 requires smaller time-steps by a factor 2/3 (cf. CFL)
-	# flux = LxF # LxF, LxW
-	# inter = DoNone # DoNone, WENO, WENO_Roe
-	# integ = RK1 # RK1, RK3, RK4 <!> RK4 requires smaller time-steps by a factor 2/3 (cf. CFL)
-	# Test selection
 
 
-	# Job parameters
-	if test==1:
-		# Density fluctuation
-		BC = PeriodicBC # OutgoingBC, PeriodicBC
-		u0, pb = Density() # Density(), Riemann(rhoJ,uJ,pJ)
-		xlims = np.array([0, 2]) # Physical domain
-		Tf = 2 # Final time
-	elif test==2:
-		# Riemann data (test 2)
-		#---------
-		# Lax
-		rhoJ = np.array([0.445, 0.5]) # rhoJ = np.array([0.445, 0.5])
-		uJ = np.array([0.698, 0])     # uJ = np.array([0.698, 0])
-		pJ = np.array([3.528, 0.571]) # pJ = np.array([3.528, 0.571])
-		BC = OutgoingBC # OutgoingBC, PeriodicBC
-		u0, pb = Riemann(rhoJ,uJ,pJ) # Density(), Riemann(rhoJ,uJ,pJ)
-		xlims = np.array([-0.5, 0.5]) # Physical domain
-		Tf = 0.16 # Final time
-
-	elif test==3:
-		# Riemann data (test 3)
-		#---------
-	# Sod
-		rhoJ = np.array([1, 0.125]) # rhoJ = np.array([1, 0.125])
-		uJ = np.array([0, 0])       # uJ = np.array([0, 0])
-		pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
-		BC = OutgoingBC # OutgoingBC, PeriodicBC
-		u0, pb = Riemann(rhoJ,uJ,pJ) # Density(), Riemann(rhoJ,uJ,pJ)
-		xlims = np.array([-0.5, 0.5]) # Physical domain
-		Tf = 0.16 # Final time
-
-
-    #-----
 
 nx_list_main=[16,32,64,128,256,512,1024]
 tests=[1,2,3]
@@ -388,11 +370,58 @@ full_error=[]
 time_list=[]
 secondary_list=[]
 nx_list=[]
-file_name="classicalweno_nature_run_smooth_updated"
+test_list=["smooth","lax","sod"]
+
 for test in tests:
+	print("running test:")
+	# Common parameters
+	flux = LxF # LxF, LxW
+	inter = WENO_Roe # DoNone, WENO, WENO_Roe
+	integ = RK4 # RK1, RK3, RK4 <!> RK4 requires smaller time-steps by a factor 2/3 (cf. CFL)
+	# flux = LxF # LxF, LxW
+	# inter = DoNone # DoNone, WENO, WENO_Roe
+	# integ = RK1 # RK1, RK3, RK4 <!> RK4 requires smaller time-steps by a factor 2/3 (cf. CFL)
+	# Test selection
+
+
+	# Job parameters
+	if test==1:
+		# Density fluctuation
+		file_name="classicalweno_nature_run_smooth_updated"
+		BC = PeriodicBC # OutgoingBC, PeriodicBC
+		u0, pb = Density() # Density(), Riemann(rhoJ,uJ,pJ)
+		xlims = np.array([0, 2]) # Physical domain
+		Tf = 2 # Final time
+	if test==2:
+		# Riemann data (test 2)
+		#---------
+		# sod
+		rhoJ = np.array([1, 0.125]) # rhoJ = np.array([1, 0.125])
+		uJ = np.array([0, 0])       # uJ = np.array([0, 0])
+		pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
+		BC = OutgoingBC # OutgoingBC, PeriodicBC
+		u0, pb = Riemann(rhoJ,uJ,pJ) # Density(), Riemann(rhoJ,uJ,pJ)
+		xlims = np.array([-0.5, 0.5]) # Physical domain
+		Tf = 0.16 # Final time
+		
+
+	if test==3:
+		# Riemann data (test 3)
+		#---------
+	# Lax
+		
+		rhoJ = np.array([0.445, 0.5]) # rhoJ = np.array([0.445, 0.5])
+		uJ = np.array([0.698, 0])     # uJ = np.array([0.698, 0])
+		pJ = np.array([3.528, 0.571]) # pJ = np.array([3.528, 0.571])
+		BC = OutgoingBC # OutgoingBC, PeriodicBC
+		u0, pb = Riemann(rhoJ,uJ,pJ) # Density(), Riemann(rhoJ,uJ,pJ)
+		xlims = np.array([-0.5, 0.5]) # Physical domain
+		Tf = 0.16 # Final time
+
+    #-----
 	for nx in nx_list_main:
-		set_test(test)
-		out = run(nx)
+		print("running test:" + str(test_list[test-1]) + "so test=" +str(test) +" for Nx=" + str(nx))
+		out = run_classical(nx,test)
 		if(test==1):
 			(one_err,two_err,inf_err,nx) = out
 			full_error.append(np.array([one_err, two_err, inf_err]))

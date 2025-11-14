@@ -6,16 +6,16 @@ import matplotlib.pyplot as plt
 import time
 import math
 # from euler_utils import *
-from euler_utils_new import *
+from .euler_utils_new import *
 from prettytable import PrettyTable
-import kacewicz_v21_B as kacewicz
+from . import kacewicz_v21_B as kacewicz
+import pickle
+import os
 
 # ----------------------------------------------------------------
 # Configuration
 # ----------------------------------------------------------------
 
-# Pre-defined test cases
-from euler_tests import *
 
 """
 # Custom job parameters
@@ -61,7 +61,7 @@ def gen_error(n_vals,error_vals,time_list,second_list,file_name="errorout.txt"):
 	f.write(str(second_list)+ str("\n"))
 	f.close()
 
-def run(Nx,title):
+def run_quantum(Nx,title):
 	# Graphics
 	plots = 0 # 0, 1, 2, 3
 
@@ -97,8 +97,7 @@ def run(Nx,title):
 		# dt = Co * dx/amax
 		dt =  1.0/(8.0)*Co * dx/amax
 	else:
-		# dt = 1.0/(2**(Nx/16))* Co * dx/amax
-		dt = 1.0/(4.0)* Co * dx/amax
+		dt = 1.0/(16.0)* Co * dx/amax
 	time_steps = math.ceil(Tf/dt)
 	t_list = np.linspace(0,Tf,time_steps)
 	@jax.jit
@@ -222,7 +221,8 @@ def run(Nx,title):
 	# plt.savefig("classicalquantumwenop" + str(Nx) + ".pdf")
 	plt.savefig(title+"quantum3-" + str(  Nx_normal) +"instance"+ str(test) +".pdf")
 	plt.clf()
-
+	with open("quantum" +str(  Nx_normal) +"instance"+ str(test)+".pkl", "wb") as f:
+		pickle.dump((x,utheo(x)[0],utheo(x)[1],utheo(x)[2], u[0,:],u[1,:],u[2,:]), f) 
 	# Error wrt. exact solution
 	if pb == 'Density':
 		uth = cellav(utheo, x, dx)
@@ -240,105 +240,182 @@ def run(Nx,title):
 
 
 
-if __name__ == '__main__':
-	k_min=4
-	k_max=11
-	rho_err_l1=[]
-	rho_err_l2 = []
-	rho_err_linf =[]
 
-	u_err_l1=[]
-	u_err_l2 = []
-	u_err_linf =[]
+k_min=4
+k_max=11
+tests=[2,3]
 
-	p_err_l1=[]
-	p_err_l2 = []
-	p_err_linf = []
-	print("run starting.....")
-	nx_list=[]
-	full_error=[]
-	time_list=[]
-	secondary_list=[]
+print("run starting.....")
+
+
+for test in tests:
+	flux = LxF # LxF
+	inter = WENO_Roe # DoNone, WENO, WENO_Roe
 	if(test==1):
-			file_name="weno_nature_run_smooth_average_quantum"
-			title = "smooth"
-			run_algorithm=1
-			for k in range(k_min,k_max):
-					# run(2**k)
-					full_error.append(np.zeros(3))
-					rho_err_l1.append(0.0)
-					u_err_l1.append(0.0)
-					p_err_l1.append(0.0)
+		
+		# Density fluctuation
+		BC = PeriodicBC # OutgoingBC, PeriodicBC
+		BC_og = PeriodicBC_og
+		u0, pb = Density() # Density(), Riemann(rhoJ,uJ,pJ)
+		xlims = np.array([0, 2]) # Physical domain
+		Tf = 2 # Final time
+		rho_err_l1=[]
+		rho_err_l2 = []
+		rho_err_linf =[]
 
-					rho_err_l2.append(0.0)
-					u_err_l2.append(0.0)
-					p_err_l2.append(0.0)
-					
-					rho_err_linf.append(0.0)
-					u_err_linf.append(0.0)
-					p_err_linf.append(0.0) 
-					
-					for p in range(0,run_algorithm):
-						out = run(2**k,title)
-						(one_err,two_err,inf_err, nx,timedur,secondary) = out
-						full_error[-1] = full_error[-1] + (np.array([one_err, two_err, inf_err]))
-						time_list.append(timedur)
-						secondary_list.append(secondary)
-						nx_list.append(nx)
+		u_err_l1=[]
+		u_err_l2 = []
+		u_err_linf =[]
 
-						rho_err_l1[-1] = rho_err_l1[-1] +one_err[0]
-						u_err_l1[-1] = u_err_l1[-1] +one_err[1]
-						p_err_l1[-1] = p_err_l1[-1] +one_err[2]
+		p_err_l1=[]
+		p_err_l2 = []
+		p_err_linf = []
+		nx_list=[]
+		full_error=[]
+		time_list=[]
+		secondary_list=[]
+		file_name="weno_nature_run_smooth_average_quantum"
+		title = "smooth"
+		run_algorithm=1
+		for k in range(k_min,k_max):
+				# run(2**k)
+				full_error.append(np.zeros(3))
+				rho_err_l1.append(0.0)
+				u_err_l1.append(0.0)
+				p_err_l1.append(0.0)
 
-
-						rho_err_l2[-1] = rho_err_l2[-1] +two_err[0]
-						u_err_l2[-1] = u_err_l2[-1] +two_err[1]
-						p_err_l2[-1] = p_err_l2[-1] +two_err[2]
-						
-
-
-						rho_err_linf[-1] = rho_err_linf[-1] +inf_err[0]
-						u_err_linf[-1] = u_err_linf[-1] +inf_err[1]
-						p_err_linf[-1] = p_err_linf[-1] +inf_err[2]
-						# rho_err_linf.append(inf_err[0])
-						# u_err_linf.append(inf_err[1])
-						# p_err_linf.append(inf_err[2])        
-					full_error[-1] = (1.0/run_algorithm)*full_error[-1]
-					rho_err_l1[-1] = (1.0/run_algorithm)*rho_err_l1[-1]
-					u_err_l1[-1] = (1.0/run_algorithm)*u_err_l1[-1] 
-					p_err_l1[-1] = (1.0/run_algorithm)*p_err_l1[-1] 
-
-
-					rho_err_l2[-1] = (1.0/run_algorithm)*rho_err_l2[-1] 
-					u_err_l2[-1] = (1.0/run_algorithm)*u_err_l2[-1] 
-					p_err_l2[-1] = (1.0/run_algorithm)*p_err_l2[-1] 
-					
-
-
-					rho_err_linf[-1] = (1.0/run_algorithm)*rho_err_linf[-1]
-					u_err_linf[-1] = (1.0/run_algorithm)*u_err_linf[-1] 
-					p_err_linf[-1] = (1.0/run_algorithm)*p_err_linf[-1] 
-			generate_convergence_history(rho_err_l1, nx_list, file_name, " rho L1")
-			generate_convergence_history(u_err_l1, nx_list, file_name, " rhou L1")
-			generate_convergence_history(p_err_l1, nx_list, file_name, " E L1")
-			generate_convergence_history(rho_err_l2, nx_list, file_name, " rho L2")
-			generate_convergence_history(u_err_l2, nx_list, file_name, " rhou L2")
-			generate_convergence_history(p_err_l2, nx_list, file_name, " E L2")
-			generate_convergence_history(rho_err_linf, nx_list, file_name, " rho Linf")
-			generate_convergence_history(u_err_linf, nx_list, file_name, " rhou Linf")
-			generate_convergence_history(p_err_linf, nx_list, file_name, " E Linf")
-			gen_error(nx_list,full_error,time_list,secondary_list,"wenosmoothnature.txt")
-
-	else:
-			file_name="weno_nature_riemann"
-			title = "riemann"
-			for k in range(k_min,k_max):
-					# run(2**k)
-					print("solving riemann problem for Nx:" + str(2**k))
-					out =run(2**k,title)
-					(one_err,two_err,inf_err, nx,timedur,secondary) =out
+				rho_err_l2.append(0.0)
+				u_err_l2.append(0.0)
+				p_err_l2.append(0.0)
+				
+				rho_err_linf.append(0.0)
+				u_err_linf.append(0.0)
+				p_err_linf.append(0.0) 
+				
+				for p in range(0,run_algorithm):
+					out = run_quantum(2**k,title)
+					(one_err,two_err,inf_err, nx,timedur,secondary) = out
+					full_error[-1] = full_error[-1] + (np.array([one_err, two_err, inf_err]))
 					time_list.append(timedur)
 					secondary_list.append(secondary)
+					nx_list.append(nx)
 
-			gen_error([],[],time_list,secondary_list,"wenoriemannnature.txt")
+					rho_err_l1[-1] = rho_err_l1[-1] +one_err[0]
+					u_err_l1[-1] = u_err_l1[-1] +one_err[1]
+					p_err_l1[-1] = p_err_l1[-1] +one_err[2]
+
+
+					rho_err_l2[-1] = rho_err_l2[-1] +two_err[0]
+					u_err_l2[-1] = u_err_l2[-1] +two_err[1]
+					p_err_l2[-1] = p_err_l2[-1] +two_err[2]
+					
+
+
+					rho_err_linf[-1] = rho_err_linf[-1] +inf_err[0]
+					u_err_linf[-1] = u_err_linf[-1] +inf_err[1]
+					p_err_linf[-1] = p_err_linf[-1] +inf_err[2]
+					# rho_err_linf.append(inf_err[0])
+					# u_err_linf.append(inf_err[1])
+					# p_err_linf.append(inf_err[2])        
+				full_error[-1] = (1.0/run_algorithm)*full_error[-1]
+				rho_err_l1[-1] = (1.0/run_algorithm)*rho_err_l1[-1]
+				u_err_l1[-1] = (1.0/run_algorithm)*u_err_l1[-1] 
+				p_err_l1[-1] = (1.0/run_algorithm)*p_err_l1[-1] 
+
+
+				rho_err_l2[-1] = (1.0/run_algorithm)*rho_err_l2[-1] 
+				u_err_l2[-1] = (1.0/run_algorithm)*u_err_l2[-1] 
+				p_err_l2[-1] = (1.0/run_algorithm)*p_err_l2[-1] 
+				
+
+
+				rho_err_linf[-1] = (1.0/run_algorithm)*rho_err_linf[-1]
+				u_err_linf[-1] = (1.0/run_algorithm)*u_err_linf[-1] 
+				p_err_linf[-1] = (1.0/run_algorithm)*p_err_linf[-1] 
+		generate_convergence_history(rho_err_l1, nx_list, file_name, " rho L1")
+		generate_convergence_history(u_err_l1, nx_list, file_name, " rhou L1")
+		generate_convergence_history(p_err_l1, nx_list, file_name, " E L1")
+		generate_convergence_history(rho_err_l2, nx_list, file_name, " rho L2")
+		generate_convergence_history(u_err_l2, nx_list, file_name, " rhou L2")
+		generate_convergence_history(p_err_l2, nx_list, file_name, " E L2")
+		generate_convergence_history(rho_err_linf, nx_list, file_name, " rho Linf")
+		generate_convergence_history(u_err_linf, nx_list, file_name, " rhou Linf")
+		generate_convergence_history(p_err_linf, nx_list, file_name, " E Linf")
+		gen_error(nx_list,full_error,time_list,secondary_list,"wenosmoothnature.txt")
+
+	if(test==2):
+		#sod
+		rhoJ = np.array([1, 0.125]) # rhoJ = np.array([1, 0.125])
+		uJ = np.array([0, 0])       # uJ = np.array([0, 0])
+		pJ = np.array([1, 0.1])     # pJ = np.array([1, 0.1])
+		BC = OutgoingBC # OutgoingBC, PeriodicBC
+		BC_og = OutgoingBC_og
+		u0, pb = Riemann(rhoJ,uJ,pJ) # Density(), Riemann(rhoJ,uJ,pJ)
+		xlims = np.array([-0.5, 0.5]) # Physical domain
+		Tf = 0.16 # Final time
+
+		rho_err_l1=[]
+		rho_err_l2 = []
+		rho_err_linf =[]
+
+		u_err_l1=[]
+		u_err_l2 = []
+		u_err_linf =[]
+
+		p_err_l1=[]
+		p_err_l2 = []
+		p_err_linf = []
+		nx_list=[]
+		full_error=[]
+		time_list=[]
+		secondary_list=[]
+		file_name="weno_nature_riemann_lax"
+		title = "riemann_lax"
+		for k in range(k_min,k_max):
+				# run(2**k)
+				print("solving riemann lax problem for Nx:" + str(2**k))
+				out =run_quantum(2**k,title)
+				(one_err,two_err,inf_err, nx,timedur,secondary) =out
+				time_list.append(timedur)
+				secondary_list.append(secondary)
+
+		gen_error([],[],time_list,secondary_list,"wenoriemannlaxnature.txt")
+	if(test==3):
+		# # # Lax
+		
+
+		rhoJ = np.array([0.445, 0.5]) # rhoJ = np.array([0.445, 0.5])
+		uJ = np.array([0.698, 0])     # uJ = np.array([0.698, 0])
+		pJ = np.array([3.528, 0.571]) # pJ = np.array([3.528, 0.571])
+		BC = OutgoingBC # OutgoingBC, PeriodicBC
+		BC_og = OutgoingBC_og
+		u0, pb = Riemann(rhoJ,uJ,pJ) # Density(), Riemann(rhoJ,uJ,pJ)
+		xlims = np.array([-0.5, 0.5]) # Physical domain
+		Tf = 0.16 # Final time
+		rho_err_l1=[]
+		rho_err_l2 = []
+		rho_err_linf =[]
+
+		u_err_l1=[]
+		u_err_l2 = []
+		u_err_linf =[]
+
+		p_err_l1=[]
+		p_err_l2 = []
+		p_err_linf = []
+		nx_list=[]
+		full_error=[]
+		time_list=[]
+		secondary_list=[]
+		file_name="weno_nature_riemann_sod"
+		title = "riemann_sod"
+		for k in range(k_min,k_max):
+				# run(2**k)
+				print("solving riemann sod problem for Nx:" + str(2**k))
+				out =run_quantum(2**k,title)
+				(one_err,two_err,inf_err, nx,timedur,secondary) =out
+				time_list.append(timedur)
+				secondary_list.append(secondary)
+
+		gen_error([],[],time_list,secondary_list,"wenoriemannsodnature.txt")
 
