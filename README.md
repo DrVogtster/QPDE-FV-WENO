@@ -1,5 +1,5 @@
-This github contains the code associated with generating the figures/tables for the paper "Incorporating high-accuracy, finite-volume shock stabilization methods into a quantum algorithm
-for nonlinear partial differential equations" in Physical Review A : https://journals.aps.org/pra/pdf/10.1103/9phc-5m7b
+This GitHub repository contains the code used to generate the figures and tables for the paper “Incorporating high-accuracy, finite-volume shock stabilization methods into a quantum algorithm for nonlinear partial differential equations”, published in Physical Review A: https://journals.aps.org/pra/pdf/10.1103/9phc-5m7b
+. The repository also includes the classical implementation of the quantum PDE finite-volume solver. While this work focuses on finite-volume methods, the quantum ODE solver—which is a key component of the PDE algorithm—can be readily applied to other spatial discretizations. The general workflow is to convert the PDE to a system of ODEs, convert the ODE system to autonomous form if needed, apply the quantum ODE solver, and then reconstruct the PDE solution using the chosen spatial discretization.
 # Setting up an environment for running the codes & running the codes: 
 
 If you're on a Linux machine, to keep things straightforward, we have added a 'fvweno.yml' file that can be imported via conda: 
