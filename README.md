@@ -1,3 +1,5 @@
+This github contains the code associated with generating the figures/tables for the paper "Incorporating high-accuracy, finite-volume shock stabilization methods into a quantum algorithm
+for nonlinear partial differential equations" in Physical Review A : https://journals.aps.org/pra/pdf/10.1103/9phc-5m7b
 # Setting up an environment for running the codes & running the codes: 
 
 If you're on a Linux machine, to keep things straightforward, we have added a 'fvweno.yml' file that can be imported via conda: 
@@ -21,8 +23,17 @@ If you're on a Linux machine, to keep things straightforward, we have added a 'f
 
 
  # Cite our work
- If you found these codes to useful in academic research, please cite:
-- include Bibtex + google scholar reference later (after publication).
+ If you found these codes to useful in academic research, please consider citing our work:
+@article{vogt2025incorporating,
+  title={Incorporating high-accuracy, finite-volume shock stabilization methods into a quantum algorithm for nonlinear partial differential equations},
+  author={Vogt, Ryan and Berjamin, Harold and Rouillard, Hunter and Raff, Edward and Ranade, Priyanka and Collett, Torstein and D'Angelo-Cosme, Roberto and Holt, James and Gaitan, Frank},
+  journal={Physical Review A},
+  volume={112},
+  number={5},
+  pages={052431},
+  year={2025},
+  publisher={APS}
+}
  
 
 
