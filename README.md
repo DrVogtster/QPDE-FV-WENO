@@ -22,18 +22,21 @@ If you're on a Linux machine, to keep things straightforward, we have added a 'f
 - plot_data.py - after generating the data, running plot_data.py will make all the figures which appear in the paper.
 
 
- # Cite our work
- If you found these codes to useful in academic research, please consider citing our work:
-@article{vogt2025incorporating,
-  title={Incorporating high-accuracy, finite-volume shock stabilization methods into a quantum algorithm for nonlinear partial differential equations},
-  author={Vogt, Ryan and Berjamin, Harold and Rouillard, Hunter and Raff, Edward and Ranade, Priyanka and Collett, Torstein and D'Angelo-Cosme, Roberto and Holt, James and Gaitan, Frank},
-  journal={Physical Review A},
-  volume={112},
-  number={5},
-  pages={052431},
-  year={2025},
-  publisher={APS}
-}
- 
+ ## Reference
+ If you found these codes to useful in academic research, please consider citing our work 😊:
+**Incorporating high-accuracy, finite-volume shock stabilization methods into a quantum algorithm for nonlinear partial differential equations**  
+Ryan Vogt, Harold Berjamin, Hunter Rouillard, Edward Raff, Priyanka Ranade, Torstein Collett, Roberto D’Angelo-Cosme, James Holt, Frank Gaitan  
+*Physical Review A*, **112**(5), 052431 (2025)
 
+```bibtex
+@article{vogt2025incorporating,
+  title   = {Incorporating high-accuracy, finite-volume shock stabilization methods into a quantum algorithm for nonlinear partial differential equations},
+  author  = {Vogt, Ryan and Berjamin, Harold and Rouillard, Hunter and Raff, Edward and Ranade, Priyanka and Collett, Torstein and D'Angelo-Cosme, Roberto and Holt, James and Gaitan, Frank},
+  journal = {Physical Review A},
+  volume  = {112},
+  number  = {5},
+  pages   = {052431},
+  year    = {2025},
+  publisher = {APS}
+}
 
